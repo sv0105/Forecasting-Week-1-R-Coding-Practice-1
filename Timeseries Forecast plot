@@ -1,0 +1,25 @@
+#Loading excel and forecast packages
+library(readxl)
+library(forecast)
+
+#importing excel file
+Net_Exports_India <- read_excel("C:/Users/Veere/Downloads/Net Exports India.xlsx")
+
+#timeseries creation
+tradebalance.ts <- ts(Net_Exports_India$NX, start = c(1990,1), end = c(2022,12), freq = 12)
+tradebalance.lm <- tslm(tradebalance.ts ~ trend + I(trend^2))
+
+#Figure 2.4 from text book
+par(mfrow = c(2,1))
+plot(tradebalance.ts, xlab = "Date", ylab = "NX", ylim = c(min(Net_Exports_India$NX), max(Net_Exports_India$NX)), bty = "l")
+lines(tradebalance.lm$fitted, lwd =2)
+tradebalance.ts.zoom <- window(tradebalance.ts, start = = c(2018, 1), end = c(2022, 12))
+plot(tradebalance.ts.zoom, xlab = "Date", ylab = "NX", ylim = c(min(Net_Exports_India$NX), max(Net_Exports_India$NX)), bty = "l")
+
+#package for summary stats
+install.packages("pastecs")
+library(pastecs)
+
+summary_stats <- stat.desc(Net_Exports_India)
+
+print(summary_stats)
